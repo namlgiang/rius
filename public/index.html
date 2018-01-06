@@ -4,9 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>In ảnh</title>
+    <title>Tải ảnh lên</title>
+
+    <script src="http://localhost:8085/socket.io/socket.io.js"></script>
+    <script src="socket.io-stream.js"></script>
+    <script src="jquery.js"></script>
+    <script>
+    var socket = io('http://localhost:8085');
+
+    $(document).ready(function() {
+        $(".select").click(function() {
+            $("#file").click();
+        });
+        $("#file").change(function(e) {
+            var files = e.target.files;
+            var size = 0;
+            var totalSize = 0;
+
+            for(var i=0; i<files.length; i++) {
+                var file = e.target.files[i];
+                var stream = ss.createStream();
+                totalSize += file.size;
+                ss(socket).emit('file', stream, {size: file.size, name: file.name});
+                var blobStream = ss.createBlobReadStream(file);
+                
+                blobStream.on('data', function(chunk) {
+                    size += chunk.length;
+                    console.log(Math.floor(size / totalSize * 100) + '%');
+                });
+
+                blobStream.pipe(stream);
+            }
+        });
+    });
+    </script>
+
+    <link rel="stylesheet" href="font.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'OpenSans', sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .fullscreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        .select {
+            position: absolute;
+            top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%);
+            text-align: center;
+            font-size: 2vh;
+            font-weight: 700;
+            color: #fff;
+            background: #4683ff;
+            padding: 2vh 5vh;
+            border-radius: 10vh;
+            cursor: pointer;
+        }
+
+        #file {
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
-    In ảnh
+    <div class="fullscreen">
+        <div class="select">Chọn ảnh từ điện thoại của bạn</div>
+        <input type="file" id="file" multiple>
+    </div>
 </body>
 </html>
