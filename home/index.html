@@ -76,7 +76,7 @@
 
             $(".warning").removeClass("active");
 
-            $.get("http://localhost:8085/check/" + $(".key").val(), function(data) {
+            $.get("check/" + $(".key").val(), function(data) {
                 if(data == "1") {
                     location.href += $(".key").val();
                 } else {
