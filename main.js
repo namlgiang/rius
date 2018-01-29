@@ -6,12 +6,65 @@ var ss = require('socket.io-stream');
 var path = require('path');
 var fs = require('fs');
 
-app.use(express.static('public'));
+var allowedKeys = [
+    "bigcvinhyen"
+];
+var uploads = {};
+
+app.get("/check/:key", function(req, res) {
+    res.send(allowedKeys.includes(req.params.key) ? "1" : "0");
+});
+
+app.use(express.static('home'));
+for(var i=0; i<allowedKeys.length; i++) {
+    
+    app.use("/" + allowedKeys[i], express.static('public'));
+    uploads[allowedKeys[i]] = [];
+
+}
 
 io.on('connection', function (socket) {
+
+    var socketKey = "";
+
+    socket.on("key", function(data) {
+        socketKey = data; 
+        console.log(data);       
+        console.log(socketKey);
+        io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+    });
+
     ss(socket).on('file', function(stream, data) {
-        var filename = "images/" + path.basename(data.name);
-        stream.pipe(fs.createWriteStream(filename));
+        if(socketKey == "")
+            return;
+
+        var r = data.name.match(/\.([^.]+)/g);
+        var filename = "image" + uploads[socketKey].length + r[r.length-1];
+        
+        var path = "home/images/" + filename;
+        stream.pipe(fs.createWriteStream(path));
+
+        var size = 0;
+        stream.on('data', function(chunk) {
+            size += chunk.length;
+            if(size >= data.size) {
+                if(!uploads[socketKey].includes(filename))
+                    uploads[socketKey].push(filename);
+                io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+            }
+        });
+    });
+
+    socket.on("clear", function(data) {        
+        for(var i=0; i<uploads[socketKey].length; i++) {
+            fs.unlink("home/images/" + uploads[socketKey][i]);
+        }
+        uploads[socketKey] = [];
+        io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+    });
+
+    socket.on("user", function(data) {
+        io.emit("user", {"key": socketKey, "id": data.id});
     });
 });
 

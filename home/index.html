@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>In ảnh</title>
+    <style>
+
+        body {
+            margin: 0;
+            font-family: 'OpenSans', sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .fullscreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        .center {
+            position: absolute;
+            text-align: center;
+            top: 50%; left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            font-weight: 600;
+            font-size: 3vh;
+        }
+
+        .keywrapper {
+            margin: 5vh 0;
+        }
+
+        .key {
+            font-size: 3vh;
+            border: 0.2vh solid #000;
+            padding: 1vh 2vh;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .warning {
+            color: #ff3e3e;
+            margin-top: 2vh;
+            font-size: 2.5vh;
+        }
+
+        .warning:not(.active) {
+            display: none;
+        }
+
+        .go {
+            border: 0.2vh solid #000;
+            background: #333;
+            color: #fff;
+            text-transform: uppercase;
+            padding: 1vh 4vh;
+            font-size: 2vh;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+    </style>
+
+<script src="jquery.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".go").click(function() {
+            var key = $(".key").val().trim();
+            if(key == "") {
+                $(".warning").addClass("active");
+                return;
+            }
+
+            $(".warning").removeClass("active");
+
+            $.get("http://localhost:8085/check/" + $(".key").val(), function(data) {
+                if(data == "1") {
+                    location.href += $(".key").val();
+                } else {
+                    $(".warning").addClass("active");
+                }
+            });
+        });
+        $(".key").keypress(function(e) {
+            if(e.keyCode == 13) {
+                $(".go").click();
+            }
+        });
+    });
+</script>
+
+</head>
+<body>
+    <div class="fullscreen">
+        <div class="center">
+            <div class="label">Nhập mã địa điểm in ảnh</div>
+            <div class="keywrapper"><input class="key" type="text"><div class="warning">Mã không tồn tại</div></div>
+            <div class="go">Tiếp tục</div>
+        </div>
+    </div>
+</body>
+</html>

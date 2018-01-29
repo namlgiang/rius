@@ -6,20 +6,69 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Tải ảnh lên</title>
 
-    <!-- <script src="http://localhost:8085/socket.io/socket.io.js"></script> -->
-    <script src="http://35.184.97.39:8085/socket.io/socket.io.js"></script>
+    <script src="http://localhost:8085/socket.io/socket.io.js"></script>
+    <!-- <script src="http://35.184.97.39:8085/socket.io/socket.io.js"></script> -->
     <script src="socket.io-stream.js"></script>
     <script src="jquery.js"></script>
+
     <script>
-    // var socket = io('http://localhost:8085');
-    var socket = io('http://35.184.97.39:8085');
+    window.fbAsyncInit = function() {
+        FB.init({
+        appId            : '2005660479668812',
+        status           : true,
+        autoLogAppEvents : true,
+        xfbml            : true,
+        version          : 'v2.11'
+        });
+        FacebookLoaded();
+    };
+    
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <script>
+    options = {
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax : 5000,
+        reconnectionAttempts: 99999
+    };
+    
+    var socket;
+    
+    connect = function() {
+        socket = io.connect('http://localhost:8085', options);
+        // var socket = io.connect('http://35.184.97.39:8085', options);
+    };
+    connect();
+    
+    socket.on("disconnect", function(attempNumber) {
+        connect();
+    });
+
+    socket.emit("key", location.pathname.replace(/\//g, ""));
 
     $(document).ready(function() {
+        var uploading = false;
         $(".select").click(function() {
+            if(uploading) return;
             $("#file").click();
         });
         $("#file").change(function(e) {
             var files = e.target.files;
+
+            if(files.length == 0) return;
+
+            uploading = true;
+            $(".select").css("min-width", "50%");
+            $(".select span").html("Đang tải lên...");
+
             var size = 0;
             var totalSize = 0;
 
@@ -27,18 +76,39 @@
                 var file = e.target.files[i];
                 var stream = ss.createStream();
                 totalSize += file.size;
+                console.log(file);
+                
                 ss(socket).emit('file', stream, {size: file.size, name: file.name});
                 var blobStream = ss.createBlobReadStream(file);
                 
                 blobStream.on('data', function(chunk) {
                     size += chunk.length;
-                    console.log(Math.floor(size / totalSize * 100) + '%');
+                    $(".select .progress").css("right", (100-size / totalSize * 100) + "%");
+
+                    if(size >= totalSize) {
+                        setTimeout(function() {
+                            uploading = false;
+                            $(".select").css("min-width", "0%");
+                            $(".select span").html("Chọn ảnh từ điện thoại của bạn");
+                            $(".select .progress").css("right", "100%");
+                        },500);
+                    }
                 });
 
                 blobStream.pipe(stream);
             }
         });
     });
+
+    function FacebookLoaded() {
+        $(".login-fb").click(function() {
+            FB.login(function(res) {
+                if(res.status == "connected") {
+                    socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
+                }
+            });
+        });
+    }
     </script>
 
     <link rel="stylesheet" href="font.css">
@@ -56,27 +126,68 @@
             top: 0; left: 0; width: 100%; height: 100%;
         }
 
-        .select {
+        .center {
             position: absolute;
             top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%);
             text-align: center;
+        }
+
+        .button {
+            padding: 2vh 5vh;
+            border-radius: 20vh;
+            cursor: pointer;
             font-size: 2vh;
             font-weight: 700;
+        }
+
+        .select {
+            position: relative;
             color: #fff;
-            background: #4683ff;
-            padding: 2vh 5vh;
-            border-radius: 10vh;
-            cursor: pointer;
+            background: #ff9900;
+            transition: 200ms;
+            overflow: hidden;
+            min-width: 0%;
+        }
+
+        .select .progress {
+            position: absolute;
+            width: 200%; height: 200%;
+            right: 100%; top: -50%;
+            background: rgb(42, 230, 255);
+            transition: 200ms;
+            border-radius: 100vh;
+        }
+        
+        .select span {
+            position: relative;
+            z-index: 1;
         }
 
         #file {
             opacity: 0;
         }
+
+        .or {
+            margin: 3vh 0;
+            font-weight: 700;
+        }
+
+        .login-fb {
+            background: #4682ff;
+            color: #fff;
+        }
+
     </style>
 </head>
 <body>
     <div class="fullscreen">
-        <div class="select">Chọn ảnh từ điện thoại của bạn</div>
+        
+        <div class="center">
+            <div class="button select"><span>Chọn ảnh từ điện thoại của bạn</span><div class="progress"></div></div>
+            <div class="or">Hoặc</div>
+            <div class="button login-fb">In ảnh từ Facebook của bạn</div>
+        </div>
+
         <input type="file" id="file" multiple>
     </div>
 </body>

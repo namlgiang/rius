@@ -18,6 +18,7 @@
   "homepage": "https://github.com/namlgiang/rius#readme",
   "dependencies": {
     "express": "^4.16.2",
+    "mnemonic": "^1.0.1",
     "socket.io": "^2.0.4",
     "socket.io-stream": "^0.9.1"
   }
