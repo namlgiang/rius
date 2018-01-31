@@ -44,8 +44,11 @@ io.on('connection', function (socket) {
         if(socketKey == "")
             return;
 
+        console.log(data);
+
         var r = data.name.match(/\.([^.]+)/g);
         var filename = "image" + uploads[socketKey].length + r[r.length-1];
+        uploads[socketKey].push(filename);
         
         var path = "home/images/" + filename;
         stream.pipe(fs.createWriteStream(path));
@@ -54,8 +57,6 @@ io.on('connection', function (socket) {
         stream.on('data', function(chunk) {
             size += chunk.length;
             if(size >= data.size) {
-                if(!uploads[socketKey].includes(filename))
-                    uploads[socketKey].push(filename);
                 io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
             }
         });
