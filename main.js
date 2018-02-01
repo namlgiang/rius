@@ -21,7 +21,7 @@ app.get("/check/:key", function(req, res) {
     res.send(allowedKeys.includes(req.params.key) ? "1" : "0");
 });
 
-app.use(express.static('home'));
+app.use(express.static('home'), {maxage : 0});
 for(var i=0; i<allowedKeys.length; i++) {
     
     app.use("/" + allowedKeys[i], express.static('public'));
