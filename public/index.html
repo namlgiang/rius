@@ -104,7 +104,7 @@
                 if(res.status == "connected") {
                     socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
                 }
-            }, {scope: 'user_photos', auth_type: 'request'});
+            }, {scope: 'user_photos', auth_type: 'rerequest'});
         });
     }
     </script>
