@@ -21,7 +21,7 @@ app.get("/check/:key", function(req, res) {
     res.send(allowedKeys.includes(req.params.key) ? "1" : "0");
 });
 
-app.use(express.static('home'), {maxage : 0});
+app.use(express.static('home'));
 for(var i=0; i<allowedKeys.length; i++) {
     
     app.use("/" + allowedKeys[i], express.static('public'));
@@ -71,6 +71,8 @@ io.on('connection', function (socket) {
     });
 
     socket.on("user", function(data) {
+        console.log(data);
+        
         io.emit("user", {"key": socketKey, "id": data.id});
     });
 });
