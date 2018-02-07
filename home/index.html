@@ -68,7 +68,7 @@
 <script>
     $(document).ready(function() {
         $(".go").click(function() {
-            var key = $(".key").val().trim();
+            var key = $(".key").val().trim().toLowerCase();
             if(key == "") {
                 $(".warning").addClass("active");
                 return;
@@ -76,9 +76,9 @@
 
             $(".warning").removeClass("active");
 
-            $.get("check/" + $(".key").val(), function(data) {
+            $.get("check/" + key, function(data) {
                 if(data == "1") {
-                    location.href += $(".key").val();
+                    location.href += key;
                 } else {
                     $(".warning").addClass("active");
                 }

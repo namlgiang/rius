@@ -101,9 +101,21 @@
     function FacebookLoaded() {
         $(".login-fb").click(function() {
             FB.login(function(res) {
+
                 if(res.status == "connected") {
-                    socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
+                    FB.api('/me/permissions', function(data) {
+                        for(var i=0; i<data.data.length; i++) {
+                            if(data.data[i].permission == "user_photos" && data.data[i].status != "granted") {
+                                alert("Lỗi truy cập ảnh, xin mời bạn đăng nhập lại!");
+                                return;
+                            }
+                        }
+                        
+                        alert("Đăng nhập thành công!");
+                        socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
+                    });
                 }
+
             }, {scope: 'user_photos', auth_type: 'rerequest'});
         });
     }
