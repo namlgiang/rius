@@ -105,14 +105,13 @@
                 if(res.status == "connected") {
                     FB.api('/me/permissions', function(data) {
                         for(var i=0; i<data.data.length; i++) {
-                            if(data.data[i].permission == "user_photos" && data.data[i].status != "granted") {
-                                alert("Lỗi truy cập ảnh, xin mời bạn đăng nhập lại!");
+                            if(data.data[i].permission == "user_photos" && data.data[i].status == "granted") {
+                                alert("Đăng nhập thành công!");
+                                socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
                                 return;
                             }
                         }
-                        
-                        alert("Đăng nhập thành công!");
-                        socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
+                        alert("Lỗi truy cập ảnh, xin mời bạn đăng nhập lại!");
                     });
                 }
 
