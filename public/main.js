@@ -78,13 +78,13 @@ function FacebookLoaded() {
                             
                             // socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
 
-                            FB.api("/me/photos?limit=100", function(data) {
+                            FB.api("/me/photos?limit=100", function(photos) {
                                 
                                 var images = [];
-                                for(var i=0; i<data.data.length; i++) {
-                                    FB.api("/"+data.data[i].id+"?fields=images", function(data) {
-                                        images.push(data.images[0].source);
-                                        if(images.length == data.data.length) {
+                                for(var i=0; i<photos.data.length; i++) {
+                                    FB.api("/"+photos.data[i].id+"?fields=images", function(link) {
+                                        images.push(link.images[0].source);
+                                        if(images.length == photos.data.length) {
                                             socket.emit("facebook", {
                                                 "key": location.pathname.replace(/\//g, ""),
                                                 "images": images
