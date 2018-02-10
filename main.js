@@ -1,3 +1,5 @@
+import { fail } from 'assert';
+
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -32,12 +34,14 @@ for(var i=0; i<allowedKeys.length; i++) {
 io.on('connection', function (socket) {
 
     var socketKey = "";
+    var isServer = false;
 
     socket.on("key", function(data) {
         console.log(data);
         if(data.key) {
             socketKey = data.key;
-            if(!data.isServer)
+            isServer = data.isServer;
+            if(!isServer)
                 io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
         } else {
             socketKey = data;
@@ -45,7 +49,7 @@ io.on('connection', function (socket) {
         }
     });
 
-    if(!data.isServer) {
+    if(!isServer) {
         socket.on("clear", function(data) {        
             for(var i=0; i<uploads[socketKey].length; i++) {
                 fs.unlink("home/images/" + uploads[socketKey][i]);
