@@ -34,21 +34,35 @@ io.on('connection', function (socket) {
     var socketKey = "";
 
     socket.on("key", function(data) {
-        socketKey = data; 
-        console.log(data);       
-        console.log(socketKey);
-        io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+        console.log(data);
+        if(data.key) {
+            socketKey = data.key;
+            if(!data.isServer)
+                io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+        } else {
+            socketKey = data;
+            io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+        }
     });
 
+    if(!data.isServer) {
+        socket.on("clear", function(data) {        
+            for(var i=0; i<uploads[socketKey].length; i++) {
+                fs.unlink("home/images/" + uploads[socketKey][i]);
+            }
+            uploads[socketKey] = [];
+            io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+        });
+    }
+
     ss(socket).on('file', function(stream, data) {
-        if(socketKey == "")
+        console.log(data);
+        if(!allowedKeys.includes(data.key))
             return;
 
-        console.log(data);
-
         var r = data.name.match(/\.([^.]+)/g);
-        var filename = "image" + uploads[socketKey].length + r[r.length-1];
-        uploads[socketKey].push(filename);
+        var filename = "image" + uploads[data.key].length + r[r.length-1];
+        uploads[data.key].push(filename);
         
         var path = "home/images/" + filename;
         stream.pipe(fs.createWriteStream(path));
@@ -57,24 +71,18 @@ io.on('connection', function (socket) {
         stream.on('data', function(chunk) {
             size += chunk.length;
             if(size >= data.size) {
-                io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+                io.emit("photos", {"key": data.key, "images": uploads[data.key]});
             }
         });
     });
 
-    socket.on("clear", function(data) {        
-        for(var i=0; i<uploads[socketKey].length; i++) {
-            fs.unlink("home/images/" + uploads[socketKey][i]);
-        }
-        uploads[socketKey] = [];
-        io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+    socket.on("user", function(data) {
+        io.emit("user", data);
     });
 
-    socket.on("user", function(data) {
-        console.log(data);
-        
-        io.emit("user", {"key": socketKey, "id": data.id});
-    });
+    socket.on("facebook", function(data) {
+        io.emit("facebook", data);
+    })
 });
 
 server.listen(8085, function() {

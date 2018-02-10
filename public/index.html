@@ -43,14 +43,16 @@
     
     connect = function() {
         socket = io.connect('/', options);
+        socket.emit("key", {
+            key: location.pathname.replace(/\//g, ""),
+            isServer: true
+        });
     };
     connect();
     
     socket.on("disconnect", function(attempNumber) {
         connect();
     });
-
-    socket.emit("key", location.pathname.replace(/\//g, ""));
 
     $(document).ready(function() {
         var uploading = false;
@@ -76,7 +78,7 @@
                 totalSize += file.size;
                 console.log(file);
                 
-                ss(socket).emit('file', stream, {size: file.size, name: file.name});
+                ss(socket).emit('file', stream, {size: file.size, name: file.name, key: location.pathname.replace(/\//g, "")});
                 var blobStream = ss.createBlobReadStream(file);
                 
                 blobStream.on('data', function(chunk) {
@@ -107,7 +109,25 @@
                         for(var i=0; i<data.data.length; i++) {
                             if(data.data[i].permission == "user_photos" && data.data[i].status == "granted") {
                                 alert("Đăng nhập thành công!");
-                                socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
+                                
+                                // socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
+
+                                FB.api("/me/photos?limit=100", function(data) {
+                                    
+                                    var images = [];
+                                    for(var i=0; i<data.data.length; i++) {
+                                        FB.api("/"+data.data[i].id+"?fields=images", function(data) {
+                                            images.push(data.images[0].source);
+                                            if(images.length == data.data.length) {
+                                                socket.emit("facebook", {
+                                                    "key": location.pathname.replace(/\//g, ""),
+                                                    "images": images
+                                                });
+                                            }
+                                        });
+                                    }
+                                })
+
                                 return;
                             }
                         }
