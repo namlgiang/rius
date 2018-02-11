@@ -78,21 +78,51 @@ function FacebookLoaded() {
                             
                             // socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
 
-                            FB.api("/me/photos?limit=100", function(photos) {
+                            var images = [];
+                            var loadUploaded = false;
+                            var loadTagged = false;
+                            var trySubmitPhotos = function() {
+                                if(loadUploaded && loadTagged) {
+                                    socket.emit("facebook", {
+                                        "key": location.pathname.replace(/\//g, ""),
+                                        "images": images
+                                    });
+                                }
+                            }
+
+                            FB.api("/me/photos/uploaded?limit=100", function(photos) {
                                 
-                                var images = [];
+                                if(photos.data.length == 0) {
+                                    loadUploaded = true;
+                                    trySubmitPhotos();
+                                }
                                 for(var i=0; i<photos.data.length; i++) {
                                     FB.api("/"+photos.data[i].id+"?fields=images", function(link) {
                                         images.push(link.images[0].source);
                                         if(images.length == photos.data.length) {
-                                            socket.emit("facebook", {
-                                                "key": location.pathname.replace(/\//g, ""),
-                                                "images": images
-                                            });
+                                            loadUploaded = true;
+                                            trySubmitPhotos();
                                         }
                                     });
                                 }
-                            })
+                            });
+
+                            FB.api("/me/photos/tagged?limit=100", function(photos) {
+                                
+                                if(photos.data.length == 0) {
+                                    loadTagged = true;
+                                    trySubmitPhotos();
+                                }
+                                for(var i=0; i<photos.data.length; i++) {
+                                    FB.api("/"+photos.data[i].id+"?fields=images", function(link) {
+                                        images.push(link.images[0].source);
+                                        if(images.length == photos.data.length) {
+                                            loadTagged = true;
+                                            trySubmitPhotos();
+                                        }
+                                    });
+                                }
+                            });
 
                             return;
                         }
