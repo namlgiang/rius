@@ -5,6 +5,7 @@ var io = require('socket.io')(server);
 var ss = require('socket.io-stream');
 var path = require('path');
 var fs = require('fs');
+var sqlite3 = require('sqlite3').verbose();
 
 var allowedKeys = [
     "bigcvinhyen"
@@ -33,6 +34,7 @@ io.on('connection', function (socket) {
 
     var socketKey = "";
     var isServer = false;
+    var db = undefined;
 
     socket.on("key", function(data) {
         console.log(data);
@@ -41,6 +43,9 @@ io.on('connection', function (socket) {
             isServer = data.isServer;
             if(!isServer)
                 io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+
+            db = new sqlite3.Database(socketKey + '.db');
+            db.run("CREATE TABLE IF NOT EXISTS log (time integer, action text, value integer)");
         } else {
             socketKey = data;
             io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
@@ -84,7 +89,19 @@ io.on('connection', function (socket) {
 
     socket.on("facebook", function(data) {
         io.emit("facebook", data);
-    })
+    });
+
+    socket.on("money", function(money) {
+        if(db) {
+            db.run("INSERT INTO log (time, action, value) VALUES ("+(new Date()).getTime()+", 'cash in', "+money+")");
+        }
+    });
+
+    socket.on("print", function(count) {
+        if(db) {
+            db.run("INSERT INTO log (time, action, value) VALUES ("+(new Date()).getTime()+", 'print', "+count+")");
+        }
+    });
 });
 
 server.listen(8085, function() {
