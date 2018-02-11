@@ -78,14 +78,15 @@ function FacebookLoaded() {
                             
                             // socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
 
-                            var images = [];
+                            var imagesUpload = [];
+                            var imagesTagged = [];
                             var loadUploaded = false;
                             var loadTagged = false;
                             var trySubmitPhotos = function() {
                                 if(loadUploaded && loadTagged) {
                                     socket.emit("facebook", {
                                         "key": location.pathname.replace(/\//g, ""),
-                                        "images": images
+                                        "images": imagesUpload.concat(imagesTagged)
                                     });
                                 }
                             }
@@ -98,8 +99,8 @@ function FacebookLoaded() {
                                 }
                                 for(var i=0; i<photos.data.length; i++) {
                                     FB.api("/"+photos.data[i].id+"?fields=images", function(link) {
-                                        images.push(link.images[0].source);
-                                        if(images.length == photos.data.length) {
+                                        imagesUpload.push(link.images[0].source);
+                                        if(imagesUpload.length == photos.data.length) {
                                             loadUploaded = true;
                                             trySubmitPhotos();
                                         }
@@ -115,8 +116,8 @@ function FacebookLoaded() {
                                 }
                                 for(var i=0; i<photos.data.length; i++) {
                                     FB.api("/"+photos.data[i].id+"?fields=images", function(link) {
-                                        images.push(link.images[0].source);
-                                        if(images.length == photos.data.length) {
+                                        imagesTagged.push(link.images[0].source);
+                                        if(imagesTagged.length == photos.data.length) {
                                             loadTagged = true;
                                             trySubmitPhotos();
                                         }
