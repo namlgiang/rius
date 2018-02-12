@@ -43,6 +43,8 @@ io.on('connection', function (socket) {
             isServer = data.isServer;
             if(!isServer)
                 io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
+            else
+                io.emit("new user");
 
             db = new sqlite3.Database(socketKey + '.db');
             db.run("CREATE TABLE IF NOT EXISTS log (time integer, action text, value integer)");
