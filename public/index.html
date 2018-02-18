@@ -34,81 +34,21 @@
     <script src="main.js"></script>
 
     <link rel="stylesheet" href="font.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: 'OpenSans', sans-serif;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        .fullscreen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            font-size: 2vh;
-        }
-
-        .center {
-            position: absolute;
-            top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%);
-            text-align: center;
-        }
-
-        .button {
-            padding: 2vh 5vh;
-            border-radius: 20vh;
-            cursor: pointer;
-            font-size: 2vh;
-            font-weight: 700;
-        }
-
-        .select {
-            position: relative;
-            color: #fff;
-            background: #ff9900;
-            transition: 200ms;
-            overflow: hidden;
-            min-width: 0%;
-        }
-
-        .select .progress {
-            position: absolute;
-            width: 200%; height: 200%;
-            right: 100%; top: -50%;
-            background: rgb(42, 230, 255);
-            transition: 200ms;
-            border-radius: 100vh;
-        }
-        
-        .select span {
-            position: relative;
-            z-index: 1;
-        }
-
-        #file {
-            opacity: 0;
-        }
-
-        .or {
-            margin: 3vh 0;
-            font-weight: 700;
-        }
-
-        .login-fb {
-            background: #4682ff;
-            color: #fff;
-        }
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="fullscreen">
+
+        <div class="modal">
+            <div class="title">Ảnh đã được gửi tới máy in!</div>
+            <div class="message">Mời bạn chọn ảnh trên Máy In Ảnh Tự Động</div>
+            <div class="back">Quay lại</div>
+        </div>
         
         <div class="center">
             <div class="button select"><span>Chọn ảnh từ điện thoại của bạn</span><div class="progress"></div></div>
             <div class="or">Hoặc</div>
-            <div class="button login-fb">In ảnh từ Facebook của bạn</div>
+            <div class="button login-fb"><span>In ảnh từ Facebook của bạn</span><div class="progress"></div></div>
         </div>
 
         <input type="file" id="file" multiple>

@@ -1,0 +1,118 @@
+body {
+    margin: 0;
+    font-family: 'OpenSans', sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.fullscreen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    font-size: 2vh;
+}
+
+.modal {
+    transition: 400ms;
+    position: absolute;
+    top: 0; left: 100%;
+    width: 100%; height: 100%;
+    z-index: 10;
+    background: #4682ff;
+    color: #fff;
+    text-align: center;
+
+    .title {
+        margin: 20vh 10vh 5vh;
+        font-size: 4vh;
+        font-weight: 700;
+    }
+
+    .message {
+        margin: 5vh 10vh 5vh;
+        font-size: 2vh;
+        font-weight: 600;
+    }
+
+    .back {
+        margin: 20vh 0 0;
+        border-radius: 1vh;
+        padding: 2vh 5vh;
+        border: 0.5vh solid #fff;
+        display: inline-block;
+        font-size: 2.5vh;
+        font-weight: 700;
+    }
+}
+.modal.active {
+    left: 0%;
+}
+
+.center {
+    position: absolute;
+    top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%);
+    text-align: center;
+}
+
+.button {
+    padding: 2vh 5vh;
+    border-radius: 20vh;
+    cursor: pointer;
+    font-size: 2vh;
+    font-weight: 700;
+}
+
+.select {
+    position: relative;
+    color: #fff;
+    background: #424242;
+    transition: 200ms;
+    overflow: hidden;
+    min-width: 0%;
+    
+    .progress {
+        position: absolute;
+        width: 200%; height: 200%;
+        right: 100%; top: -50%;
+        background: rgb(42, 230, 255);
+        transition: 200ms;
+        border-radius: 100vh;
+    }
+
+    span {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+#file {
+    opacity: 0;
+}
+
+.or {
+    margin: 3vh 0;
+    font-weight: 700;
+}
+
+.login-fb {
+    position: relative;
+    color: #fff;
+    background: #4682ff;
+    transition: 200ms;
+    overflow: hidden;
+    min-width: 0%;
+
+    .progress {
+        position: absolute;
+        width: 200%; height: 200%;
+        right: 100%; top: -50%;
+        background: rgb(42, 230, 255);
+        transition: 200ms;
+        border-radius: 100vh;
+    }
+
+    span {
+        position: relative;
+        z-index: 1;
+    }
+}

@@ -26,6 +26,9 @@ $(document).ready(function() {
         if(uploading) return;
         $("#file").click();
     });
+    $(".modal .back").click(function() {
+        $(".modal").removeClass("active");
+    });
     $("#file").change(function(e) {
         var files = e.target.files;
 
@@ -57,6 +60,7 @@ $(document).ready(function() {
                         $(".select").css("min-width", "0%");
                         $(".select span").html("Chọn ảnh từ điện thoại của bạn");
                         $(".select .progress").css("right", "100%");
+                        $(".modal").addClass("active");
                     },500);
                 }
             });
@@ -67,14 +71,23 @@ $(document).ready(function() {
 });
 
 function FacebookLoaded() {
+    var uploading = false;
     $(".login-fb").click(function() {
+
         FB.login(function(res) {
 
             if(res.status == "connected") {
                 FB.api('/me/permissions', function(data) {
                     for(var i=0; i<data.data.length; i++) {
                         if(data.data[i].permission == "user_photos" && data.data[i].status == "granted") {
-                            alert("Đăng nhập thành công!");
+
+                            if(uploading) 
+                                return;
+                            uploading = true;
+                            $(".login-fb").css("min-width", "50%");
+                            $(".login-fb span").html("Đang tải lên...");
+
+                            // alert("Đăng nhập thành công!");
                             
                             // socket.emit("user", {"key": location.pathname.replace(/\//g, ""), "id": FB.getUserID()});
 
@@ -83,11 +96,23 @@ function FacebookLoaded() {
                             var loadUploaded = false;
                             var loadTagged = false;
                             var trySubmitPhotos = function() {
+                                if(loadUploaded || loadTagged) {
+                                    $(".login-fb .progress").css("right", "50%");
+                                }
                                 if(loadUploaded && loadTagged) {
                                     socket.emit("facebook", {
                                         "key": location.pathname.replace(/\//g, ""),
                                         "images": imagesUpload.concat(imagesTagged)
                                     });
+                                    $(".login-fb .progress").css("right", "0%");
+
+                                    setTimeout(function() {
+                                        uploading = false;
+                                        $(".login-fb").css("min-width", "0%");
+                                        $(".login-fb span").html("Tiếp tục với Facebook");
+                                        $(".login-fb .progress").css("right", "100%");
+                                        $(".modal").addClass("active");
+                                    },500);
                                 }
                             }
 
