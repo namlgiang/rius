@@ -3,6 +3,7 @@ var from = new Date();
 from.setDate(from.getDate() - 14);
 var sale = [];
 var key = location.pathname.split("/")[2];
+var chart;
 
 function sameDate(d0, d1) {
     return Math.abs(d0.getTime() - d1.getTime()) < 1000*60*60*24 && d0.getDate() == d1.getDate();
@@ -60,7 +61,9 @@ function updateChart() {
             d.setDate(d.getDate() + 1);
         }
 
-        new Chart($("#sale"), {
+        if(chart)
+            chart.destroy();
+        chart = new Chart($("#sale"), {
             type: 'bar',
             data: {
                 labels: labels, 
