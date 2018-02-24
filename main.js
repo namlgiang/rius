@@ -22,10 +22,22 @@ app.get("/check/:key", function(req, res) {
     res.send(allowedKeys.includes(req.params.key) ? "1" : "0");
 });
 
+app.get("/sale/:key", function(req, res) {
+    if(allowedKeys.includes(req.params.key)) {
+        db = new sqlite3.Database(req.params.key + ".db");
+        db.all("SELECT * FROM log", function(err, rows) {
+            res.send(rows);
+        });
+    } else {
+        res.send("Key not available");
+    }
+});
+
 app.use(express.static('home'));
 for(var i=0; i<allowedKeys.length; i++) {
     
     app.use("/" + allowedKeys[i], express.static('public'));
+    app.use("/manage/" + allowedKeys[i], express.static('manage'));
     uploads[allowedKeys[i]] = [];
 
 }
