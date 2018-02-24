@@ -37,6 +37,8 @@ function updateChart() {
         var labels = [];
         var data = [];
         var print = [];
+        var sumSale = 0;
+        var sumPrint = 0;
         var d = new Date(from);
         var i = 0;
         while(d.getTime() < to.getTime()) {
@@ -57,7 +59,9 @@ function updateChart() {
             }            
 
             data.push(count);
+            sumSale += count;
             print.push(count1);
+            sumPrint += count1;
             d.setDate(d.getDate() + 1);
         }
 
@@ -68,12 +72,12 @@ function updateChart() {
             data: {
                 labels: labels, 
                 datasets: [{
-                    label: 'Sales',
+                    label: 'Sales (' + sumSale.toLocaleString() + ' VND)',
                     yAxisID: 'A',
                     data: data,
                     backgroundColor: '#33a7ff'
                 }, {
-                    label: 'Print',
+                    label: 'Print (' + sumPrint.toLocaleString() + ')',
                     yAxisID: 'B',
                     data: print,
                     backgroundColor: '#000'
