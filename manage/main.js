@@ -41,7 +41,7 @@ function updateChart() {
         var sumPrint = 0;
         var d = new Date(from);
         var i = 0;
-        while(d.getTime() < to.getTime()) {
+        while(d.getTime() <= to.getTime()) {
             labels.push(d.getDate() + "/" + d.getMonth());
             var count = 0;
             var count1 = 0;
@@ -67,17 +67,19 @@ function updateChart() {
 
         if(chart)
             chart.destroy();
+        $(".total-sales").text(sumSale.toLocaleString() + "VND");
+        $(".total-print").text(sumPrint.toLocaleString());
         chart = new Chart($("#sale"), {
             type: 'bar',
             data: {
                 labels: labels, 
                 datasets: [{
-                    label: 'Sales (' + sumSale.toLocaleString() + ' VND)',
+                    label: 'Sales',
                     yAxisID: 'A',
                     data: data,
                     backgroundColor: '#33a7ff'
                 }, {
-                    label: 'Print (' + sumPrint.toLocaleString() + ')',
+                    label: 'Print',
                     yAxisID: 'B',
                     data: print,
                     backgroundColor: '#000'

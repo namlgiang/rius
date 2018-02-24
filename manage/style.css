@@ -12,3 +12,11 @@ body {
   max-width: 1000px;
   margin: 20px auto;
 }
+.label {
+  display: inline-block;
+  width: 100px;
+  font-weight: 700;
+}
+.value {
+  color: #0091ff;
+}
