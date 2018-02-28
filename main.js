@@ -83,7 +83,7 @@ io.on('connection', function (socket) {
             return;
 
         var r = data.name.match(/\.([^.]+)/g);
-        var filename = "image" + uploads[data.key].length + r[r.length-1];
+        var filename = data.key + "-" + uploads[data.key].length + r[r.length-1];
         uploads[data.key].push(filename);
         
         var path = "home/images/" + filename;
