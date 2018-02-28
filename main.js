@@ -8,7 +8,8 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 
 var allowedKeys = [
-    "bigcvinhyen"
+    "bigcvinhyen",
+    "namlgiang"
 ];
 var uploads = {};
 
