@@ -42,7 +42,7 @@ function updateChart() {
         var d = new Date(from);
         var i = 0;
         while(d.getTime() <= to.getTime()) {
-            labels.push(d.getDate() + "/" + d.getMonth());
+            labels.push(d.getDate() + "/" + (d.getMonth()+1));
             var count = 0;
             var count1 = 0;
 
