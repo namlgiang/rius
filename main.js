@@ -96,7 +96,7 @@ io.on('connection', function (socket) {
         stream.on('data', function(chunk) {
             size += chunk.length;
             if(size >= data.size) {
-                sharp(path).resize(300,300).max().toFile(
+                sharp(path).resize(200,200).max().toFile(
                     "home/images/" + filename.match(/[^.]+/g)[0] + "-min." + filename.match(/[^.]+/g)[1]
                 ).then(function() {
                     io.emit("photos", {"key": data.key, "images": uploads[data.key]});
