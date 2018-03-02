@@ -6,6 +6,7 @@ var ss = require('socket.io-stream');
 var path = require('path');
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
+var sharp = require('sharp');
 
 var allowedKeys = [
     "bigcvinhyen",
@@ -93,7 +94,11 @@ io.on('connection', function (socket) {
         stream.on('data', function(chunk) {
             size += chunk.length;
             if(size >= data.size) {
-                io.emit("photos", {"key": data.key, "images": uploads[data.key]});
+                sharp(path).resize(300,300).max().toFile(
+                    "home/images/" + filename.match(/[^.]+/g)[0] + "-min" + filename.match(/[^.]+/g)[1]
+                ).then(function() {
+                    io.emit("photos", {"key": data.key, "images": uploads[data.key]});
+                });
             }
         });
     });

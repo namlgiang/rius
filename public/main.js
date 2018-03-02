@@ -27,7 +27,8 @@ $(document).ready(function() {
         $("#file").click();
     });
     $(".modal .back").click(function() {
-        $(".modal").removeClass("active");
+        // $(".modal").removeClass("active");
+        location.reload();
     });
     $("#file").change(function(e) {
         var files = e.target.files;
