@@ -33,11 +33,11 @@ app.get("/printerstatus/:key", function(req,res) {
     db.all("SELECT * FROM log", function(err, rows) {
         for(var i=0; i<rows.length; i++) {
             if(rows[i].printer == req.params.key) {
-                res.send(1);
+                res.send("1");
                 return;
             }
         }
-        res.send(0);
+        res.send("0");
     });
 });
 
