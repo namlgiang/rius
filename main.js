@@ -73,7 +73,7 @@ io.on('connection', function (socket) {
             for(var i=0; i<uploads[socketKey].length; i++) {
                 var fn = uploads[socketKey][i];
                 fs.unlink("home/images/" + fn);
-                fs.unlink("home/images/" + fn.match(/[^.]+/g)[0] + "-min" + filename.match(/[^.]+/g)[1]);
+                fs.unlink("home/images/" + fn.match(/[^.]+/g)[0] + "-min." + filename.match(/[^.]+/g)[1]);
             }
             uploads[socketKey] = [];
             io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
@@ -97,7 +97,7 @@ io.on('connection', function (socket) {
             size += chunk.length;
             if(size >= data.size) {
                 sharp(path).resize(300,300).max().toFile(
-                    "home/images/" + filename.match(/[^.]+/g)[0] + "-min" + filename.match(/[^.]+/g)[1]
+                    "home/images/" + filename.match(/[^.]+/g)[0] + "-min." + filename.match(/[^.]+/g)[1]
                 ).then(function() {
                     io.emit("photos", {"key": data.key, "images": uploads[data.key]});
                 });
