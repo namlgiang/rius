@@ -19,8 +19,10 @@ $(document).ready(function() {
     $.get("/printerstatus/" + key, function(data) {
         if(data == "0") {
             $(".status").addClass("normal").text("RUNNING");
+            $(".fix").hide();
         } else {
             $(".status").addClass("error").text("ERROR");
+            $(".fix").show();
         }
     });
 
@@ -35,6 +37,12 @@ $(document).ready(function() {
         updateChart();
     });
     
+    $(".fix").click(function() {
+        $.get("/fixprinter/" + key);
+        setTimeout(function() {
+            location.reload();
+        }, 1000);
+    });
 });
 
 function updateChart() {

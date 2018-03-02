@@ -30,18 +30,25 @@ app.get("/printerreport/:key", function(req,res) {
 
 app.get("/printerstatus/:key", function(req,res) {
     db = new sqlite3.Database("printer-report.db");
-    db.all("SELECT * FROM log", function(err, rows) {
-        if(!rows) {
-            res.send("0");
-            return;
-        }
-        for(var i=0; i<rows.length; i++) {
-            if(rows[i].printer == req.params.key) {
-                res.send("1");
-                return;
+    db.serialize(function() {
+        db.run("CREATE TABLE IF NOT EXISTS log (time integer, printer text)");
+        db.all("SELECT * FROM log", function(err, rows) {
+            for(var i=0; i<rows.length; i++) {
+                if(rows[i].printer == req.params.key) {
+                    res.send("1");
+                    return;
+                }
             }
-        }
-        res.send("0");
+            res.send("0");
+        });
+    });
+});
+
+app.get("/fixprinter/:key", function(req, res) {
+    db = new sqlite3.Database("printer-report.db");
+    db.serialize(function() {
+        db.run("CREATE TABLE IF NOT EXISTS log (time integer, printer text)");
+        db.run("DELETE FROM log WHERE printer='"+req.params.key+"'");
     });
 });
 
