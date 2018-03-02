@@ -16,6 +16,13 @@ function setDate(input, time) {
 $(document).ready(function() {
 
     $(".title").text("Analytics: " + key);
+    $.get("/printerstatus/" + key, function(data) {
+        if(data == "0") {
+            $(".status").addClass("normal").text("RUNNING");
+        } else {
+            $(".status").addClass("error").text("ERROR");
+        }
+    });
 
     setDate($(".date-from"), from);
     setDate($(".date-to"), to);

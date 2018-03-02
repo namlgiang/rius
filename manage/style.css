@@ -20,3 +20,16 @@ body {
 .value {
   color: #0091ff;
 }
+.status {
+  margin: 10px 0;
+  padding: 2px 5px;
+  background: #000;
+  display: inline-block;
+  color: #fff;
+}
+.status.running {
+  background: #169aff;
+}
+.status.error {
+  background: #ff1616;
+}
