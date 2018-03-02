@@ -71,7 +71,9 @@ io.on('connection', function (socket) {
     if(!isServer) {
         socket.on("clear", function(data) {        
             for(var i=0; i<uploads[socketKey].length; i++) {
-                fs.unlink("home/images/" + uploads[socketKey][i]);
+                var fn = uploads[socketKey][i];
+                fs.unlink("home/images/" + fn);
+                fs.unlink("home/images/" + fn.match(/[^.]+/g)[0] + "-min" + filename.match(/[^.]+/g)[1]);
             }
             uploads[socketKey] = [];
             io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
