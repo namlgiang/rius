@@ -20,6 +20,14 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.get("/printerreport/:key", function(req,res) {
+    db = new sqlite3.Database("printer-report.db");
+    db.serialize(function() {
+        db.run("CREATE TABLE IF NOT EXISTS log (time integer, printer text)");
+        db.run("INSERT INTO log (time, printer) VALUES ("+(new Date()).getTime()+", `"+req.params.key+"`)");
+    });
+});
+
 app.get("/check/:key", function(req, res) {
     res.send(allowedKeys.includes(req.params.key) ? "1" : "0");
 });
