@@ -58,7 +58,7 @@ app.get("/check/:key", function(req, res) {
 });
 
 app.get("/online", function(req,res) {
-    console.log(online);    
+    res.send(online)
 });
 
 app.get("/sale/:key", function(req, res) {
