@@ -7,6 +7,7 @@ var path = require('path');
 var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var sharp = require('sharp');
+var online = {};
 
 var allowedKeys = [
     "bigcvinhyen",
@@ -56,6 +57,10 @@ app.get("/check/:key", function(req, res) {
     res.send(allowedKeys.includes(req.params.key) ? "1" : "0");
 });
 
+app.get("/online", function(req,res) {
+    console.log(online);    
+});
+
 app.get("/sale/:key", function(req, res) {
     if(allowedKeys.includes(req.params.key)) {
         db = new sqlite3.Database(req.params.key + ".db");
@@ -73,6 +78,7 @@ for(var i=0; i<allowedKeys.length; i++) {
     app.use("/" + allowedKeys[i], express.static('public'));
     app.use("/manage/" + allowedKeys[i], express.static('manage'));
     uploads[allowedKeys[i]] = [];
+    online[allowedKeys[i]] = 0;
 
 }
 
@@ -98,6 +104,10 @@ io.on('connection', function (socket) {
             socketKey = data;
             io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
         }
+        online[socketKey]++;
+    });
+    socket.on("disconnect", function() {
+        online[socketKey]--;
     });
 
     if(!isServer) {
