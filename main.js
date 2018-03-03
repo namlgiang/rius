@@ -108,7 +108,8 @@ io.on('connection', function (socket) {
         }
     });
     socket.on("disconnect", function() {
-        online[socketKey]--;
+        if(!isServer)
+            online[socketKey]--;
     });
 
     if(!isServer) {
