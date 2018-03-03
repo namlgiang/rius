@@ -93,9 +93,11 @@ io.on('connection', function (socket) {
         if(data.key) {
             socketKey = data.key;
             isServer = data.isServer;
-            if(!isServer)
+            if(!isServer) {
                 io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
-            else
+                online[socketKey]++;
+            }
+            else 
                 io.emit("new user", socketKey);
 
             db = new sqlite3.Database(socketKey + '.db');
@@ -104,7 +106,6 @@ io.on('connection', function (socket) {
             socketKey = data;
             io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
         }
-        online[socketKey]++;
     });
     socket.on("disconnect", function() {
         online[socketKey]--;
