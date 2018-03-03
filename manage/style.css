@@ -20,14 +20,16 @@ body {
 .value {
   color: #0091ff;
 }
-.status {
+.status,
+.online {
   margin: 10px 0;
   padding: 2px 5px;
   background: #000;
   display: inline-block;
   color: #fff;
 }
-.status.normal {
+.status.normal,
+.online.active {
   background: #169aff;
 }
 .status.error {

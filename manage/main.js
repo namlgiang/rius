@@ -15,6 +15,12 @@ function setDate(input, time) {
 
 $(document).ready(function() {
 
+    $.get("/online", function(data) {
+        if(data[key] && data[key] > 0) {
+            $(".online").addClass("active").text("ONLINE");
+        }
+    });
+
     $(".title").text("Analytics: " + key);
     $.get("/printerstatus/" + key, function(data) {
         if(data == "0") {
