@@ -8,6 +8,7 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3').verbose();
 var sharp = require('sharp');
 var online = {};
+var {exec} = require('child_process');
 
 var allowedKeys = [
     "bigcvinhyen",
@@ -116,8 +117,8 @@ io.on('connection', function (socket) {
         socket.on("clear", function(data) {        
             for(var i=0; i<uploads[socketKey].length; i++) {
                 var fn = uploads[socketKey][i];
-                fs.unlink("home/images/" + fn);
-                fs.unlink("home/images/" + fn.match(/[^.]+/g)[0] + "-min." + filename.match(/[^.]+/g)[1]);
+                exec("rm home/images/" + fn);
+                exec("rm home/images/" + fn.match(/[^.]+/g)[0] + "-min." + fn.match(/[^.]+/g)[1]);
             }
             uploads[socketKey] = [];
             io.emit("photos", {"key": socketKey, "images": uploads[socketKey]});
@@ -140,7 +141,7 @@ io.on('connection', function (socket) {
         stream.on('data', function(chunk) {
             size += chunk.length;
             if(size >= data.size) {
-                sharp(path).resize(200,200).max().toFile(
+                sharp(path).rotate().resize(200,200).max().toFile(
                     "home/images/" + filename.match(/[^.]+/g)[0] + "-min." + filename.match(/[^.]+/g)[1]
                 ).then(function() {
                     io.emit("photos", {"key": data.key, "images": uploads[data.key]});
