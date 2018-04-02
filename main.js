@@ -144,7 +144,9 @@ io.on('connection', function (socket) {
                 sharp(path).rotate().resize(200,200).max().toFile(
                     "home/images/" + filename.match(/[^.]+/g)[0] + "-min." + filename.match(/[^.]+/g)[1]
                 ).then(function() {
-                    io.emit("photos", {"key": data.key, "images": uploads[data.key]});
+                    setTimeout(function() {
+                        io.emit("photos", {"key": data.key, "images": uploads[data.key]});
+                    }, 1000);
                 });
             }
         });
