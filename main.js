@@ -130,6 +130,8 @@ io.on('connection', function (socket) {
         if(!allowedKeys.includes(data.key))
             return;
 
+        sharp.cache(false);
+
         var r = data.name.match(/\.([^.]+)/g);
         var filename = data.key + "-" + uploads[data.key].length + r[r.length-1];
         uploads[data.key].push(filename);
