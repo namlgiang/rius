@@ -12,7 +12,8 @@ var {exec} = require('child_process');
 
 var allowedKeys = [
     "bigcvinhyen",
-    "namlgiang"
+    "namlgiang",
+    "ilovetranphu"
 ];
 var uploads = {};
 
@@ -59,7 +60,7 @@ app.get("/check/:key", function(req, res) {
 });
 
 app.get("/online", function(req,res) {
-    res.send(online)
+    res.send(online);
 });
 
 app.get("/sale/:key", function(req, res) {
