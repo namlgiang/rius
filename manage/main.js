@@ -62,6 +62,7 @@ function updateChart() {
         var sumPrint = 0;
         var d = new Date(from);
         var i = 0;
+        var max = 0;
         while(d.getTime() <= to.getTime()) {
             labels.push(d.getDate() + "/" + (d.getMonth()+1));
             var count = 0;
@@ -80,11 +81,15 @@ function updateChart() {
             }            
 
             data.push(count);
+            max = Math.max(max, count);
             sumSale += count;
             print.push(count1);
+            max = Math.max(max, count1*10000);
             sumPrint += count1;
             d.setDate(d.getDate() + 1);
         }
+
+        console.log(max);
 
         if(chart)
             chart.destroy();
@@ -113,14 +118,18 @@ function updateChart() {
                         type: 'linear',
                         position: 'left',
                         ticks: {
-                            beginAtZero:true
+                            beginAtZero:true,
+                            stepSize: 10000,
+                            max: max
                         }
                       }, {
                         id: 'B',
                         type: 'linear',
                         position: 'right',
                         ticks: {
-                            beginAtZero:true
+                            beginAtZero:true,
+                            stepSize: 1,
+                            max: max/10000
                         }
                       }]
                 }
